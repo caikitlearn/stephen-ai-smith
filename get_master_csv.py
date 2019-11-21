@@ -41,7 +41,7 @@ def main():
     if not os.path.isdir('data/'):
         os.mkdir('data/')
 
-    master_csv.to_csv('data/{}.csv.gz'.format(user),compression='gzip')
+    master_csv.to_csv('data/{}.csv.gz'.format(user),index=False,compression='gzip')
 
 if __name__=='__main__':
     main()
