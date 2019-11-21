@@ -1,9 +1,4 @@
-#  forked from https://github.com/bpb27/twitter_scraping
-
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException,StaleElementReferenceException
-from time import sleep
+# some code forked from https://github.com/bpb27/twitter_scraping
 
 import argparse
 import datetime
@@ -11,38 +6,34 @@ import json
 import os
 import pandas as pd
 
-def arg_arser():
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import NoSuchElementException,StaleElementReferenceException
+from time import sleep
+
+def arg_parser():
     parser=argparse.ArgumentParser(description='scraping twitter ids')
     parser.add_argument('-u','--user',help='username of account to scrape')
-    parser.add_argument('-s','--start',help='date to start data collection in yyyy-mm-dd format')
-    parser.add_argument('-e','--end',help='date to end data collection in yyyy-mm-dd format')
+    parser.add_argument('-y','--year',default=str(datetime.datetime.today().year),help='year for data collection')
     return(parser)
 
-def get_args():
-    ap=argParser()
-    args=ap.parse_args()
-    return args
-
-if __name__=='__main__':
-    args=get_args()
-
+def main(delay=1,driver=webdriver.Safari(),id_selector='.time a.tweet-timestamp',tweet_selector='li.js-stream-item'):
+    args=arg_parser().parse_args()
     user=args.user.lower()
-    start=args.start
-    end=args.end
+    year=args.year
 
-    delay=1  # time to wait on each page load before reading the page
-    driver=webdriver.Safari()  # options are Chrome() Firefox() Safari()
+    if not os.path.isdir('ids/'):
+        os.mkdir('ids/')
 
-    twitter_ids_filename='ids/ids_{}_to_{}.json'.format(start,end)
-    date_range=[d.strftime('%F') for d in pd.date_range(start,end)]
-    id_selector='.time a.tweet-timestamp'
-    tweet_selector='li.js-stream-item'
+    if not os.path.isdir('ids/'+user+'/'):
+        os.mkdir('ids/'+user+'/')
+
+    twitter_ids_filename='ids/{}/ids_{}_{}.json'.format(user,user,year)
+    date_range=[d.strftime('%F') for d in pd.date_range(year+'-01-01',str(int(year)+1)+'-01-01')]
+
     ids=[]
-
     for i in range(len(date_range)-1):
-        url='https://twitter.com/search?f=tweets&vertical=default&q=from%3A'+\
-            user+'%20since%3A'+start+'%20until%3A'+end+'include%3Aretweets&src=typd'
-        print('username:',user)
+        url='https://twitter.com/search?f=tweets&vertical=default&q=from%3A'+user+'%20since%3A'+date_range[i]+'%20until%3A'+date_range[i+1]+'include%3Aretweets&src=typd'
         print('date:',date_range[i])
         driver.get(url)
         sleep(delay)
@@ -52,13 +43,11 @@ if __name__=='__main__':
             increment=10
 
             while len(found_tweets)>=increment:
-                print('scrolling down to load more tweets')
+                # print('scrolling down to load more tweets')
                 driver.execute_script('window.scrollTo(0,document.body.scrollHeight);')
                 sleep(delay)
                 found_tweets=driver.find_elements_by_css_selector(tweet_selector)
                 increment+=10
-
-            print('{} tweets found, {} total'.format(len(found_tweets),len(ids)))
 
             for tweet in found_tweets:
                 try:
@@ -70,9 +59,14 @@ if __name__=='__main__':
         except NoSuchElementException:
             print('no tweets on this day')
 
+        print('{} tweets found, {} total'.format(len(found_tweets),len(ids)))
+
     with open(twitter_ids_filename,'w') as outfile:
         json.dump(list(set(ids)),outfile)
-        print('tweets found on this scrape: ',len(ids))
+        print('unique tweets found on this scrape: ',len(ids))
 
-    print('all done here')
+    print('done')
     driver.close()
+
+if __name__=='__main__':
+    main()
