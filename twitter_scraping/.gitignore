@@ -1,5 +1,4 @@
 .DS_Store
 *.ipynb
 api_keys.json
-ids/
 meta/
