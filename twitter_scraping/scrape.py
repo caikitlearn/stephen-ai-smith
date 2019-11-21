@@ -63,7 +63,7 @@ def main(delay=1,driver=webdriver.Safari(),id_selector='.time a.tweet-timestamp'
 
     with open(twitter_ids_filename,'w') as outfile:
         json.dump(list(set(ids)),outfile)
-        print('unique tweets found on this scrape: ',len(ids))
+        print('unique tweets found on this scrape:',len(ids))
 
     print('done')
     driver.close()
