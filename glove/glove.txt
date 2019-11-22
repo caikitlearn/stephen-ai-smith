@@ -1,0 +1,1 @@
+GloVe pre-trained (on Twitter data) word vectors can be downloaded from http://nlp.stanford.edu/data/glove.twitter.27B.zip
