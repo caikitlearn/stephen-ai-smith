@@ -35,8 +35,8 @@ def clean_tweet(tweet):
     # fixing some HTML elements
     chars_to_fix={'&amp;':'&','&lt;':'<','&gt;':'>','@':'<at>'}
     for char in chars_to_fix:
-        cleaned_tweet=tweet.replace(char,chars_to_fix[char])
-    return cleaned_tweet
+        tweet=tweet.replace(char,chars_to_fix[char])
+    return tweet
 
 def main():
     args=arg_parser().parse_args()
