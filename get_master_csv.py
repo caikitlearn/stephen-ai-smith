@@ -48,8 +48,8 @@ def main():
     master_csv=compile_master(user)
     master_csv['std_favorite_count']=get_std_count(master_csv,'favorite_count')
     master_csv['std_retweet_count']=get_std_count(master_csv,'retweet_count')
-    master_csv.to_csv('data/{}.csv.gz'.format(user),index=False,compression='gzip')
     master_csv['full_text']=[clean_tweet(tweet) for tweet in master_csv['full_text']]
+    master_csv.to_csv('data/{}.csv.gz'.format(user),index=False,compression='gzip')
     print('saved','data/{}.csv.gz'.format(user))
 
     master_csv[['full_text']].to_csv('data/{}_tweets.csv'.format(user),header=False,index=False,quoting=csv.QUOTE_ALL)
