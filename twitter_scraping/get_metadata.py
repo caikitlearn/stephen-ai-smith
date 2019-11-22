@@ -20,7 +20,8 @@ def get_source(entry):
 def arg_parser():
     parser=argparse.ArgumentParser(description='scraping twitter data')
     parser.add_argument('-u','--user',help='username of account to scrape')
-    return(parser)
+
+    return parser
 
 def main():
     args=arg_parser().parse_args()

@@ -7,15 +7,16 @@ import os
 import pandas as pd
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException,StaleElementReferenceException
+from selenium.webdriver.common.keys import Keys
 from time import sleep
 
 def arg_parser():
     parser=argparse.ArgumentParser(description='scraping twitter ids')
     parser.add_argument('-u','--user',help='username of account to scrape')
     parser.add_argument('-y','--year',default=str(datetime.datetime.today().year),help='year for data collection')
-    return(parser)
+
+    return parser
 
 def main(delay=1,driver=webdriver.Safari(),id_selector='.time a.tweet-timestamp',tweet_selector='li.js-stream-item'):
     args=arg_parser().parse_args()
