@@ -28,7 +28,7 @@ def compile_master(user):
     master_csv.reset_index(drop=True,inplace=True)
     master_csv['created_year']=master_csv['created_at'].dt.year
 
-    return master_csv
+    return master_csv.loc[master_csv['favorite_count']>0].reset_index()
 
 def get_std_count(master_csv,col):
     annual_means={}
