@@ -54,7 +54,7 @@ def clean_tweet_gpt2(tweet):
     return cleaned_tweet
 
 def clean_tweet(tweet):
-    # for the sentiment analysis portion, remove punctuation as well
+    # for the scoring portion, remove punctuation as well
     cleaned_tweet=remove_html(tweet)
 
     # remove punctuation except @ and # (sadly this means no smileys)
@@ -101,10 +101,10 @@ def main():
             writer.writerow([clean_tweet_gpt2(tweet)])
     print('saved training data for GPT-2:','data/{}_gpt2.csv'.format(user))
 
-    # csv for sentiment analysis
+    # csv for scoring model
     master_csv['full_text']=[clean_tweet(tweet) for tweet in master_csv['full_text']]
     master_csv.to_csv('data/{}_sa.csv.gz'.format(user),index=False,compression='gzip')
-    print('saved data for sentiment analysis:','data/{}_sa.csv.gz'.format(user))
+    print('saved data for scoring model:','data/{}_sa.csv.gz'.format(user))
 
 if __name__=='__main__':
     main()
