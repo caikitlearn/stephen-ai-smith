@@ -16,7 +16,7 @@ def clean_gen_tweets(filename,delimiter='===================='):
 
     return gen_tweets
 
-def predict_scores(gen_tweets):
+def predict_scores(m,gen_tweets):
     sas=prep_data()
     max_tweet_len=sas['tweet_len'].max()
     tokenizer=get_tokenizer(sas,vocab_size=20000)
@@ -37,9 +37,14 @@ def main():
     gpt_files=sorted(f for f in os.listdir('gpt-2_output') if f.startswith('gpt'))
     for file in gpt_files:
         gen_tweets=clean_gen_tweets('gpt-2_output/'+file)
-        scores=predict_scores(gen_tweets)
+        scores=predict_scores(m,gen_tweets)
         top100=pd.DataFrame({'tweet':gen_tweets,'score':scores}).sort_values('score',ascending=False)
-        top100.to_csv('gpt-2_output/top100_'+file,index=False)
+        top100=top100.iloc[:100].reset_index(drop=True)
+        with open('gpt-2_output/top100_'+file,'w') as f:
+            for tweet,score in zip(top100['tweet'],top100['score']):
+                f.write('score: '+str(score)+'\n')
+                f.write(tweet+'\n')
+                f.write('\n')
         print('saved:','gpt-2_output/top100_'+file)
 
 if __name__=='__main__':
