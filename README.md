@@ -1,5 +1,5 @@
 # Stephen A.I. Smith
-``https://caikitlearn.com/stephen-ai-smith``
+[``https://caikitlearn.com/stephen-ai-smith``](https://caikitlearn.com/stephen-ai-smith)
 
 ## Step 1: get Twitter data
 - ``twitter_scraping/scrape.py`` collects the tweet IDs
