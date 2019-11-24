@@ -28,18 +28,7 @@ def compile_master(user):
     master_csv.reset_index(drop=True,inplace=True)
     master_csv['created_year']=master_csv['created_at'].dt.year
 
-    return master_csv.loc[master_csv['favorite_count']>0].reset_index()
-
-def get_std_count(master_csv,col):
-    annual_means={}
-    annual_stds={}
-
-    for year in master_csv['created_year'].unique():
-        n_fav=master_csv.loc[master_csv['created_year']==year,col].values
-        annual_means[year]=np.mean(n_fav)
-        annual_stds[year]=np.std(n_fav)
-
-    return [(c-annual_means[year])/annual_stds[year] for c,year in zip(master_csv[col],master_csv['created_year'])]
+    return master_csv
 
 def remove_html(tweet):
     # replacing URLs with the urlurlurl token
@@ -101,15 +90,14 @@ def main():
 
     # master csv
     master_csv=compile_master(user)
-    master_csv['std_favorite_count']=get_std_count(master_csv,'favorite_count')
-    master_csv['std_retweet_count']=get_std_count(master_csv,'retweet_count')
     master_csv.to_csv('data/{}.csv.gz'.format(user),index=False,compression='gzip')
     print('saved master csv:','data/{}.csv.gz'.format(user))
 
     # csv fpr GPT-2
+    best_tweets=master_csv.loc[master_csv['favorite_count']>=100].reset_index()
     with open('data/{}_gpt2.csv'.format(user),'w') as f:
         writer=csv.writer(f,quoting=csv.QUOTE_ALL)
-        for tweet in master_csv['full_text']:
+        for tweet in best_tweets['full_text']:
             writer.writerow([clean_tweet_gpt2(tweet)])
     print('saved training data for GPT-2:','data/{}_gpt2.csv'.format(user))
 
